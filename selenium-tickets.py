@@ -23,9 +23,9 @@ my_seat_num="//div[contains(text(), '"+seat_num+"')]"
 path=os.path.dirname(__file__)
 #設定chrome driver的執行檔路徑
 options=Options()
+options.chrome_executable_path=os.path.join(path, "chromedriver.exe")
 #不關閉網頁
 options.add_experimental_option("detach", True)
-options.chrome_executable_path=(path+"\\chromedriver.exe")
 #建立driver物件實體，用程式操作瀏覽器運作
 driver=webdriver.Chrome(options=options)
 driver.maximize_window()
@@ -56,7 +56,7 @@ while True:
     try:
         while True:
             try:
-                seat=WebDriverWait(driver, 5, 1).until(EC.presence_of_element_located((By.XPATH, my_seat_num)))#每1秒刷新介面，直到元素出現，element_located為不管這個元素可否點擊
+                seat=WebDriverWait(driver, 5, 0.5).until(EC.presence_of_element_located((By.XPATH, my_seat_num)))#每1秒刷新介面，直到元素出現，element_located為不管這個元素可否點擊
                 
                 #test
                 # driver.execute_script("window.scrollTo(0, 1500);")
@@ -89,15 +89,17 @@ web=driver.current_url
 driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
 #獲取當前文件路徑
 path=os.path.dirname(__file__)
+imgname="picture.png"
+fullpath=os.path.join(path, imgname)
 #截圖驗證碼
 def screenshot():
     veritycode=WebDriverWait(driver, 2, 1).until(EC.presence_of_element_located((By.CLASS_NAME,"captcha-img")))
     time.sleep(1)
-    veritycode.screenshot(path+"\\picture.png")
+    veritycode.screenshot(fullpath)
 # 用pytesseract辨識並輸入驗證碼
 def veritycode():
     ocr = ddddocr.DdddOcr()
-    f = open(path+"\\picture.png", mode='rb')  # 轉成二進制讀取
+    f = open(fullpath, mode='rb')  # 轉成二進制讀取
     img = f.read()
     x = ocr.classification(img)
     return x
