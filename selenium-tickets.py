@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains #移動畫面到指定位置
+import os
 import time
 import ddddocr
 
@@ -14,16 +15,17 @@ concert=input("請輸入演唱會網址:")
 user=input("請輸入帳號:")
 password1=input("請輸入密碼:")
 seat_num=input("請輸入位置名稱,ex:A1區、全票:")
-web=input("請輸入演唱會選擇座位的網址:")
+# web=input("請輸入演唱會選擇座位的網址:")
 ticket=input("請輸入購買的票數，ex:1,2,3...:")
 ticket=int(ticket)
-
 my_seat_num="//div[contains(text(), '"+seat_num+"')]"
+#獲取當前文件路徑
+path=os.path.dirname(__file__)
 #設定chrome driver的執行檔路徑
 options=Options()
 #不關閉網頁
 options.add_experimental_option("detach", True)
-options.chrome_executable_path="C:\\python training\\chromedriver.exe"
+options.chrome_executable_path=(path+"\\chromedriver.exe")
 #建立driver物件實體，用程式操作瀏覽器運作
 driver=webdriver.Chrome(options=options)
 driver.maximize_window()
@@ -80,18 +82,22 @@ while True:
             print("還不能購買，重新整理")
             driver.refresh()
             time.sleep(1)
+#演唱會選擇座位的網址
+web=driver.current_url
+# print(web)
 #捲動到底部
 driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
-
+#獲取當前文件路徑
+path=os.path.dirname(__file__)
 #截圖驗證碼
 def screenshot():
     veritycode=WebDriverWait(driver, 2, 1).until(EC.presence_of_element_located((By.CLASS_NAME,"captcha-img")))
     time.sleep(1)
-    veritycode.screenshot("picture.png")
+    veritycode.screenshot(path+"\\picture.png")
 # 用pytesseract辨識並輸入驗證碼
 def veritycode():
     ocr = ddddocr.DdddOcr()
-    f = open("C:\\python training\\picture.png", mode='rb')  # 轉成二進制讀取
+    f = open(path+"\\picture.png", mode='rb')  # 轉成二進制讀取
     img = f.read()
     x = ocr.classification(img)
     return x
@@ -116,6 +122,7 @@ while retry:
     next_button = WebDriverWait(driver, 5).until(
         EC.element_to_be_clickable((By.XPATH,'//span[@class="v-btn__content" and text()="下一步"]')))
     next_button.click()
+    # ActionChains(driver).move_to_element(next_button).click().perform()
     #test        
     # web="https://ticketplus.com.tw/order/3300c43c45a9aa985caa180bd1c659b2/20a281300bf99a781b0501d23a9b54af"
     #lisa
