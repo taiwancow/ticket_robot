@@ -15,7 +15,6 @@ concert=input("請輸入演唱會網址:")
 user=input("請輸入帳號:")
 password1=input("請輸入密碼:")
 seat_num=input("請輸入位置名稱,ex:A1區、全票:")
-# web=input("請輸入演唱會選擇座位的網址:")
 ticket=input("請輸入購買的票數，ex:1,2,3...:")
 ticket=int(ticket)
 my_seat_num="//div[contains(text(), '"+seat_num+"')]"
@@ -81,7 +80,7 @@ fullpath=os.path.join(path, imgname)
 #截圖驗證碼
 def screenshot():
     veritycode=WebDriverWait(driver, 2, 1).until(EC.presence_of_element_located((By.CLASS_NAME,"captcha-img")))
-    time.sleep(1)
+    time.sleep(0.5)
     veritycode.screenshot(fullpath)
 # 用pytesseract辨識並輸入驗證碼
 def veritycode():
